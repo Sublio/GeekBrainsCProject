@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4C930D5426B3772A008F02C9 /* ChessSquareColor.c in Sources */ = {isa = PBXBuildFile; fileRef = 4C930D5326B3772A008F02C9 /* ChessSquareColor.c */; };
 		4CA9070626AE19E000520070 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9070526AE19E000520070 /* main.c */; };
 /* End PBXBuildFile section */
 
@@ -24,8 +23,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4C930D5226B3772A008F02C9 /* ChessSquareColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChessSquareColor.h; sourceTree = "<group>"; };
-		4C930D5326B3772A008F02C9 /* ChessSquareColor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ChessSquareColor.c; sourceTree = "<group>"; };
 		4CA9070226AE19E000520070 /* GeekBrainsCProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GeekBrainsCProject; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CA9070526AE19E000520070 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,8 +58,6 @@
 			isa = PBXGroup;
 			children = (
 				4CA9070526AE19E000520070 /* main.c */,
-				4C930D5226B3772A008F02C9 /* ChessSquareColor.h */,
-				4C930D5326B3772A008F02C9 /* ChessSquareColor.c */,
 			);
 			path = GeekBrainsCProject;
 			sourceTree = "<group>";
@@ -124,7 +119,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CA9070626AE19E000520070 /* main.c in Sources */,
-				4C930D5426B3772A008F02C9 /* ChessSquareColor.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

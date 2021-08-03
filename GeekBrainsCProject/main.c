@@ -8,28 +8,61 @@
 #include <stdio.h>
 #include <math.h>
 #include <ctype.h>
-#include "ChessSquareColor.h"
 #include <string.h>
 
-//void bmi(void){
-//    // Task 1: BMI
-//    float body_weight;
-//    float body_height;
-//    float bmi;
-//    printf("Enter body weight in kilos:\n");
-//    scanf("%f", &body_weight);
-//    printf("Enter body height in meters:\n");
-//    scanf("%f", &body_height);
-//    //I=m/(h*h)
-//    bmi = body_height/(pow(body_weight, 2));
-//    printf("The BMI is: %f\n", bmi);
+int convertIntToBinary(int i){
+        if (i == 0)
+            return 0;
+        else
+            return (i % 2 + 10 *convertIntToBinary(i / 2));
+}
+
+void powerNonRecur(void){
+    int i, power;
+    printf("Enter the number:\n");
+    scanf("%d", &i);
+    printf("Enter exponenta:\n");
+    scanf("%d", &power);
+    printf("%f\n", pow(i, power));
+   
+}
+
+int powerRecursively(int base, int a) {
+    if (a != 0)
+        return (base * powerRecursively(base, a - 1));
+    else
+        return 1;
+}
+
+
+//void calcRecursion(int a, int b, char str){
+//    for (int i = 0; i<2; i++){
+//        char s = str;
+//        int n = a;
+//        if (i == 0){
+//            n++;
+//            s+=*("+1");
+//        }else{
+//            n*=2;
+//            s+=*("*2");
+//        }
+//        if (n<b) {
+//            calcRecursion(a, b, str);
+//        }else {
+//            if (n==b){ printf("%d = %d", s, b);}
+//        }
+//    }
 //}
 
-void convertInt(void){
-    int i, r;
-    printf("Enter the number\n");
-    scanf("%i", &i);
-    printf("%i", i);
+int calcRecursion(int a, int b){
+    if (a == b) {
+        return 1;
+    }
+    if (a>b){
+        return 0;
+    }
+    
+    return calcRecursion(a + 1, b) + calcRecursion(a * 2, b);
 }
 
 
@@ -37,60 +70,46 @@ void showMenu(void) {
     int select;
     printf("Выберите алгоритм:\n");
     printf("[1] Перевод числа из десятичной системы в двоичную;\n");
-    printf("[2] Найти максимальное из четырех чисел.Массивы не использовать;\n");
-    printf("[3] Написать программу обмена значениями двух целочисленных переменных;\n");
-    printf("[4] Написать программу нахождения корней заданного квадратного уравнения;\n");
-    printf("[5] С клавиатуры вводится номер месяца. Требуется определить, к какому времени года он относится;\n");
-    printf("[6] Ввести возраст человека (от 1 до 150 лет) и вывести его вместе с последующим словом «год», «года» или «лет»;\n");
-    printf("[7]  С клавиатуры вводятся числовые координаты двух полей шахматной доски (x1,y1,x2,y2). Требуется определить, относятся поля к одному цвету или нет;\n");
-    printf("[8] Ввести a и b и вывести квадраты и кубы чисел от a до b;\n");
-    printf("[9] Даны целые положительные числа N и K. Используя только операции сложения и вычитания, найти частное от деления нацело N на K, а также остаток от этого деления;\n");
-    printf("[10] Дано целое число N (> 0). С помощью операций деления нацело и взятия остатка от деления определить, имеются ли в записи числа N нечетные цифры. Если имеются, то вывести True, если нет — вывести False;\n");
+    printf("[2] Реализовать функцию возведения числа a в степень b без рекурсии;\n");
+    printf("[3] Реализовать функцию возведения числа a в степень b через рекурсию;\n");
+    printf("[4] Сколько существует программ, которые число 3 преобразуют в число 20: С использованием массива;\n");
+    printf("[5] Сколько существует программ, которые число 3 преобразуют в число 20: С использованием рекурсии;\n");
     printf("[0] выход \n");
     
     scanf("%d", &select);
+    int number, power;
+    int result;
     
     switch (select) {
         case 1:
-            convertInt();
-            //showMenu();
+            printf("%d\n",convertIntToBinary(61));
+            showMenu();
             break;
-//        case 2:
-//            findMaxNumber();
-//            showMenu();
-//            break;
-//        case 3:
-//            exchangeNumber();
-//            showMenu();
-//            break;
-//        case 4:
-//            equationRoots();
-//            showMenu();
-//            break;
-//        case 5:
-//            monthOfYear();
-//            showMenu();
-//            break;
-//        case 6:
-//            yearYears();
-//            showMenu();
-//            break;
-//        case 7:
-//            chess();
-//            showMenu();
-//            break;
-//        case 8:
-//            squaresCubes();
-//            showMenu();
-//            break;
-//        case 9:
-//            quotientRemainder();
-//            showMenu();
-//            break;
-//        case 10:
-//            oddNumber();
-//            showMenu();
-//            break;
+        case 2:
+            powerNonRecur();
+            showMenu();
+            break;
+        case 3:
+            printf("Enter the number:\n");
+            scanf("%d", &number);
+            printf("Enter the power:\n");
+            scanf("%d", &power);
+            printf("Result is: %d\n", powerRecursively(number,power));
+            showMenu();
+            break;
+        case 4://Сколько существует программ, которые число 3 преобразуют в число 20 через массив.
+            printf("Enter the number:\n");
+            scanf("%d", &number);
+            printf("Enter the power:\n");
+            scanf("%d", &power);
+            printf("Result is: %d\n", powerRecursively(number,power));
+            showMenu();
+            break;
+        case 5://Сколько существует программ, которые число 3 преобразуют в число 20 через рекурсию.
+            result = calcRecursion(3, 20);
+            printf("Количество программ: %d\n", result);
+            showMenu();
+            break;
         case 0:
         default:
             break;
