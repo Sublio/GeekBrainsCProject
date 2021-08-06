@@ -9,105 +9,61 @@
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 
-int convertIntToBinary(int i){
-        if (i == 0)
-            return 0;
-        else
-            return (i % 2 + 10 *convertIntToBinary(i / 2));
+void swapArrayEl(int *array, int i){
+    int intermediate;
+    intermediate = array[i];
+    array[i] = array[i-1];
+    array[i-1] = intermediate;
 }
 
-void powerNonRecur(void){
-    int i, power;
-    printf("Enter the number:\n");
-    scanf("%d", &i);
-    printf("Enter exponenta:\n");
-    scanf("%d", &power);
-    printf("%f\n", pow(i, power));
-   
-}
-
-int powerRecursively(int base, int a) {
-    if (a != 0)
-        return (base * powerRecursively(base, a - 1));
-    else
-        return 1;
-}
-
-
-//void calcRecursion(int a, int b, char str){
-//    for (int i = 0; i<2; i++){
-//        char s = str;
-//        int n = a;
-//        if (i == 0){
-//            n++;
-//            s+=*("+1");
-//        }else{
-//            n*=2;
-//            s+=*("*2");
-//        }
-//        if (n<b) {
-//            calcRecursion(a, b, str);
-//        }else {
-//            if (n==b){ printf("%d = %d", s, b);}
-//        }
-//    }
-//}
-
-int calcRecursion(int a, int b){
-    if (a == b) {
-        return 1;
+void shakeSort(int *array, int size){
+    int leftMark = 1;
+    int rightMark = size - 1;
+    while(leftMark <= rightMark){
+        for (int i = rightMark; i >= leftMark; i--){
+            if (array[i-1]> array[i]){
+                swapArrayEl(array, i);
+                leftMark++;
+            }
+        }
+        for (int j = leftMark; j <= rightMark; j++){
+            if (array[j-1] > array[j]){
+                swapArrayEl(array, j);
+                rightMark--;
+            }
+        }
+        printf("Iteration: %d", leftMark - 1);
     }
-    if (a>b){
-        return 0;
-    }
-    
-    return calcRecursion(a + 1, b) + calcRecursion(a * 2, b);
 }
-
 
 void showMenu(void) {
     int select;
     printf("Выберите алгоритм:\n");
     printf("[1] Перевод числа из десятичной системы в двоичную;\n");
-    printf("[2] Реализовать функцию возведения числа a в степень b без рекурсии;\n");
+    printf("[2] Шейкерная сортировка;\n");
     printf("[3] Реализовать функцию возведения числа a в степень b через рекурсию;\n");
     printf("[4] Сколько существует программ, которые число 3 преобразуют в число 20: С использованием массива;\n");
     printf("[5] Сколько существует программ, которые число 3 преобразуют в число 20: С использованием рекурсии;\n");
     printf("[0] выход \n");
     
     scanf("%d", &select);
-    int number, power;
-    int result;
+    
+    int array[7] = {1,42,525,4,23454,2,45};
     
     switch (select) {
         case 1:
-            printf("%d\n",convertIntToBinary(61));
             showMenu();
             break;
         case 2:
-            powerNonRecur();
+            shakeSort(&array, 7);
             showMenu();
             break;
         case 3:
-            printf("Enter the number:\n");
-            scanf("%d", &number);
-            printf("Enter the power:\n");
-            scanf("%d", &power);
-            printf("Result is: %d\n", powerRecursively(number,power));
             showMenu();
             break;
-        case 4://Сколько существует программ, которые число 3 преобразуют в число 20 через массив.
-            printf("Enter the number:\n");
-            scanf("%d", &number);
-            printf("Enter the power:\n");
-            scanf("%d", &power);
-            printf("Result is: %d\n", powerRecursively(number,power));
-            showMenu();
-            break;
-        case 5://Сколько существует программ, которые число 3 преобразуют в число 20 через рекурсию.
-            result = calcRecursion(3, 20);
-            printf("Количество программ: %d\n", result);
+        case 4:
             showMenu();
             break;
         case 0:
