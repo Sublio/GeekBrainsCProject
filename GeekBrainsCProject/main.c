@@ -12,151 +12,147 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define N 10
-
-int swapsCount = 0;
-
-void swapElement(int *arr, int i)
+void pathFinder()
 {
-    int intermediate;
-    intermediate = arr[i];
-    arr[i] = arr[i - 1];
-    arr[i - 1] = intermediate;
-    swapsCount++;
-    printf("Current swaps count is: %d\n", swapsCount);
-}
-
-void swap(int* x, int* y)
-{
-    int temp = *x;
-    *x = *y;
-    *y = temp;
-    swapsCount++;
-}
-
-void shakerSort(int *arr, int size)
-{
-    int leftMark = 1;
-    int rightMark = size - 1;
-    while (leftMark <= rightMark) {
-        for (int i = rightMark; i >= leftMark; i--)
-             if (arr[i - 1] > arr[i]) swapElement(arr, i);
-         leftMark++;
- 
-         for (int i = leftMark; i <= rightMark; i++)
-              if (arr[i - 1] > arr[i]) swapElement(arr, i);
-         rightMark--;
-      }
-    swapsCount = 0;
-}
-
-void bubbleSort(int *num, int size)
-{
-  for (int i = 0; i < size-1; i++)
-  {
-    for (int j = (size - 1); j > i; j--)
-    {
-      if (num[j - 1] > num[j])
-      {
-        int temp = num[j - 1];
-        num[j - 1] = num[j];
-        num[j] = temp;
-        swapsCount++;
-      }
-    }
-  }
-    printf("Current swaps count is: %d\n", swapsCount);
-    swapsCount = 0;
-}
-
-void optimisedBubbleSort(int arr[], int n)
-{
-    int i, j;
-    bool swapped;
-    for (i = 0; i < n - 1; i++) {
-        swapped = false;
-        for (j = 0; j < n - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                swap(&arr[j], &arr[j + 1]);
-                swapped = true;
-            }
+    
+    //    Map
+    //    3 3
+    //    1 1 1
+    //    0 1 0
+    //    0 1 0
+    
+    int N = 0, M = 0;
+    
+    printf("Input parameters for NxM map\n");
+    printf("format N-M, like 3-3 : \n");
+    scanf("%d-%d", &N, &M);
+    
+    printf("1 - we can move\n");
+    printf("0 - we forbid to  move\n");
+    printf("\n");
+    
+    int roadBoard[N][M];
+    int value, i, j;
+    
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < M; j++) {
+            printf("Input value 1 or 0 for [%d]x[%d] : \n", i, j);
+            scanf("%d", &value);
+            if ((value > 1) || (value < 0))
+                roadBoard[i][j] = 1;
+            else
+                roadBoard[i][j] = value;
         }
-        if (swapped == false)
-            break;
     }
     
-    printf("Current swaps count is: %d\n", swapsCount);
-    swapsCount = 0;
+    printf("\n");
+    printf("Entered values : \n");
+    
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < M; j++)
+            printf("%d  ", roadBoard[i][j]);
+        printf("\n");
+    }
+    
+    roadBoard[0][0] = 1;
+    
+    for (i = 1; i < N - 1; i ++) {
+        if (roadBoard[i][0] == 0)
+            roadBoard[i+1][0] = 0;
+    }
+    for (j = 1; j < M - 1; j ++) {
+        if (roadBoard[0][j] == 0)
+            roadBoard[0][j+1] = 0;
+    }
+    
+    printf("\n");
+    printf("Map matrix : \n");
+    
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < M; j++)
+            printf("%d  ", roadBoard[i][j]);
+        printf("\n");
+    }
+    
+    printf("\n");
+    
+    for (i = 1; i < N; i++) {
+        for (j = 1; j < M; j++)
+            if (roadBoard[i][j] != 0)
+                roadBoard[i][j] = roadBoard[i][j-1] + roadBoard[i-1][j];
+    }
+    
+    
+    printf("\n");
+    printf("Steps count matrix : \n");
+    
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < M; j++)
+            printf("%d     ", roadBoard[i][j]);
+        printf("\n");
+        printf("\n");
+    }
+    
+    printf("\n");
+    printf("\n");
+    
 }
 
-int binarySearch(int arr[], int l, int r, int x)
+int max(int a, int b);
+
+int lcs( char *X, char *Y, int m, int n )
 {
-    if (r >= l) {
-        int mid = l + (r - l) / 2;
-        if (arr[mid] == x)
-            return mid;
-        if (arr[mid] > x)
-            return binarySearch(arr, l, mid - 1, x);
-        return binarySearch(arr, mid + 1, r, x);
+    int L[m+1][n+1];
+    int i, j;
+    
+    for (i=0; i<=m; i++)
+    {
+        for (j=0; j<=n; j++)
+        {
+            if (i == 0 || j == 0)
+                L[i][j] = 0;
+            
+            else if (X[i-1] == Y[j-1])
+                L[i][j] = L[i-1][j-1] + 1;
+            
+            else
+                L[i][j] = max(L[i-1][j], L[i][j-1]);
+        }
     }
-    return -1;
+    
+    
+    return L[m][n];
 }
+
+int max(int a, int b)
+{
+    return (a > b)? a : b;
+}
+
+
 
 void showMenu(void) {
     int select;
     printf("Выберите алгоритм:\n");
-    printf("[1] Неоптимизированная сортировка пузырьком;\n");
-    printf("[2] Оптимизированная сортировка пузырьком;\n");
-    printf("[3] Шейкерная сортировка;\n");
-    printf("[4] Бинарный поиск;\n");
+    printf("[1] Вычислить длину подпоследовательности;\n");
+    printf("[2] Количество маршрутов с препятствиями. Реализовать чтение массива с препятствием и нахождение количество маршрутов;\n");
     printf("[0] выход \n");
     
     scanf("%d", &select);
     
-    int A[N] = {1,3,4, 54, 22,66,23,55,6,10};
-    printf("Array before sorting\n");
-    for (int i = 0; i < N; i++) {
-        printf("%d ", A[i]);
-    }
-    printf("\n");
-    
-    int arr[] = { 2, 3, 4, 10, 40 };
-    int n = sizeof(arr) / sizeof(arr[0]);
-    int searchableELement = 40;
-    int result;
+    char X[] = "AGGTAB";
+    char Y[] = "GXTXAYB";
+     
+    int m = strlen(X);
+    int n = strlen(Y);
     
     
     switch (select) {
         case 1:
-            bubbleSort(A, N);
-            printf("Array after sorting\n");
-            for (int i = 0; i < N; i++) {
-                printf("%d ", A[i]);
-            }
-            printf("\n");
+            printf("Длина подпоследовательности = %d\n", lcs( X, Y, m, n ) );
             break;
-            
         case 2:
-            optimisedBubbleSort(A, N);
-            printf("Array after sorting\n");
-            for (int i = 0; i < N; i++) {
-                printf("%d ", A[i]);
-            }
-            printf("\n");
-            break;
-        case 3:
-            shakerSort(A, N);
-            printf("Array after sorting\n");
-            for (int i = 0; i < N; i++) {
-                printf("%d ", A[i]);
-            }
-            printf("\n");
-            showMenu();
-            break;
-        case 4:
-            result = binarySearch(arr, 0, n - 1, searchableELement);
-            printf("Index of element is %d\n", result);
-            showMenu();
+            pathFinder();
             break;
         case 0:
         default:
