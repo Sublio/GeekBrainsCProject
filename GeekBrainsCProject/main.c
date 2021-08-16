@@ -12,188 +12,180 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define max 100
-#define MAX 50
-
-void insert(void);
-void delete(void);
-void display(void);
-int queue_array[MAX];
-int rear = -1;
-int front = -1;
+typedef int T;
+typedef struct Node {
+    T data;
+    struct Node *left;
+    struct Node *right;
+    struct Node *parent;
+} Node;
 
 
-
-int stack[max], top = -1, i, x;
-
-void queueManager(void){
-    int choice;
-    while(1){
-        printf("1.Insert element to queue \n");
-        printf("2.Delete element from queue \n");
-        printf("3.Display all elements of queue \n");
-        printf("4.Quit \n");
-        printf("Enter your choice : ");
-        scanf("%d", &choice);
-        switch (choice) {
-            case 1:
-                insert();
-                break;
-            case 2:
-                delete();
-                break;
-            case 3:
-                display();
-                break;
-            case 4:
-                exit(1);
-                break;
-            default:
-                printf("Wrong number selected\n");
-                break;
+void printTree(Node *root) {
+    if (root)
+    {
+        printf("%d",root->data);
+        if (root->left || root->right)
+        {
+        printf("(");
+ 
+        if (root->left)
+            printTree(root->left);
+        else
+            printf("NULL");
+        printf(",");
+ 
+        if (root->right)
+            printTree(root->right);
+        else
+            printf("NULL");
+        printf(")");
         }
     }
 }
 
-void insert(void){
-    int add_item;
-    if (rear == MAX - 1)
-        printf("Queue Overflow \n");
-    else
+
+Node* createFreeNode(T value, Node *parent) {
+    Node* tmp = (Node*) malloc(sizeof(Node));
+    tmp->left = tmp->right = NULL;
+    tmp->data = value;
+    tmp->parent = parent;
+    return tmp;
+}
+
+void insert(Node **head, int value) {
+    Node *tmp = NULL;
+    if (*head == NULL)
     {
-        if (front == - 1)
-        /*If queue is initially empty */
-            front = 0;
-        printf("Inset the element in queue : ");
-        scanf("%d", &add_item);
-        rear = rear + 1;
-        queue_array[rear] = add_item;
+        *head = createFreeNode(value, NULL);
+        return;
     }
-}
-
-
-void delete(void)
-{
-    if (front == - 1 || front > rear)
+ 
+    tmp = *head;
+    while (tmp)
     {
-        printf("Queue Underflow \n");
-        return ;
-    }
-    else
-    {
-        printf("Element deleted from queue is : %d\n", queue_array[front]);
-        front = front + 1;
-    }
-}
-
-
-void display(void)
-{
-    int i;
-    if (front == - 1)
-        printf("Queue is empty \n");
-    else
-    {
-        printf("Queue is : \n");
-        for (i = front; i <= rear; i++)
-            printf("%d ", queue_array[i]);
-        printf("\n");
-    }
-}
-
-void push(int x){
-    ++top;
-    stack[top] = x;
-}
-
-int pop(void){
-    return stack[top];
-}
-
-void stackConvertion(void){
-    int num, total = 0, item;
-    printf("Please enter the number: ");
-    scanf("%d", &num);
-    
-    while(num>0){
-        total = num%2;
-        push(total);
-        num/=2;
-    }
-    
-    for (i = top; top>-1; top --){
-        item = pop();
-        printf("%d", item);
-    }
-    
-}
-
-void bracketSequence(void){
-    int c=0,count1=0,count2=0;
-    char s[1000];
-    printf("Enter bracket sequence: ");
-    scanf("%s",s);
-    while(s[c] != '\0')
-    {
-        if(s[c] == '"')
+        if (value> tmp->data)
         {
-            ++count2;
-        }
-        if(s[c] == ')')
-        {
-            --count1;
-        }
-        if (count1 != -1)
-        {
-            if(s[c]== '(')
+            if (tmp->right)
             {
-                ++count1;
+                tmp = tmp->right;
+                continue;
+            }
+            else
+            {
+                tmp->right = createFreeNode(value, tmp);
+                return;
             }
         }
-        
-        ++c;
-    }
-    //printf("%d\n",count1);
-    //printf("%d\n",count2);
-    if(count1 == 0 && count2%2 == 0)
-    {
-        printf("Sequence is valid!\n");
-    }
-    else
-    {
-        printf("Sequence is not valid!\n");
+        else if (value< tmp->data)
+        {
+            if (tmp->left)
+            {
+                tmp = tmp->left;
+                continue;
+            }
+            else
+            {
+                tmp->left = createFreeNode(value, tmp);
+                return;
+            }
+        }
+        else
+        {
+            exit(2); // wrong tree node
+        }
     }
 }
 
 
-void showMenu(void) {
-    int select;
-    printf("Выберите алгоритм:\n");
-    printf("[1] Реализовать перевод из десятичной в двоичную систему счисления с использованием стека;\n");
-    printf("[2] Написать программу, которая определяет, является ли введенная скобочная последовательность правильной;\n");
-    printf("[3] Реализовать очередь;\n");
-    printf("[0] выход \n");
-    
-    scanf("%d", &select);
-    
-    switch (select) {
-        case 1:
-            stackConvertion();
-            break;
-        case 2:
-            bracketSequence();
-            break;
-        case 3:
-            queueManager();
-            break;
-        case 0:
-        default:
-            break;
+void preOrderTravers(Node* root) {
+    if (root) {
+        printf("%d ", root->data);
+        preOrderTravers(root->left);
+        preOrderTravers(root->right);
     }
 }
+
+
+void simTreePass(Node* root) {
+    if (root) {
+        simTreePass(root->left);
+        printf("%d ", root->data);
+        simTreePass(root->right);
+    }
+}
+
+void inverseTreePrint(Node* root) {
+    if (root) {
+        simTreePass(root->left);
+        simTreePass(root->right);
+        printf("%d ", root->data);
+    }
+}
+
+Node *find(Node *root, int value)
+{
+    while (root)   // Until tree is not null
+    {
+        if (root->data > value)
+        {
+            root = root->left;
+            continue;
+        }
+        else if (root->data > value)
+        {
+            root = root->right;
+            continue;
+        }
+        else
+        {
+            return root;
+        }
+    }
+    return NULL;
+}
+
+
+int hash(char *S)
+{
+     int r=0;
+     while(*S)
+     {
+         r+=(int)(*S);
+         S++;
+     }
+     return r;
+}
+
+
+//void showMenu(void) {
+//    int select;
+//    printf("Выберите алгоритм:\n");
+//    printf("[1] Реализовать простейшую хеш-функцию;\n");
+//    printf("[2] Написать программу, которая определяет, является ли введенная скобочная последовательность правильной;\n");
+//    printf("[3] Реализовать очередь;\n");
+//    printf("[0] выход \n");
+//
+//    scanf("%d", &select);
+//    int i;
+//
+//    switch (select) {
+//        case 1:
+//            i = hash("avs");
+//            printf("Result is %d\n", i);
+//            break;
+//        case 2:
+//            break;
+//        case 3:
+//            break;
+//        case 0:
+//        default:
+//            break;
+//    }
+//}
 
 
 int main(int argc, const char * argv[]) {
-    showMenu();
+    //showMenu();
     return 0;
 }
