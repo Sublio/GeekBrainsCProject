@@ -23,6 +23,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4C7B41AA26CCA74D004BD6BB /* numbers.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = numbers.txt; sourceTree = "<group>"; };
 		4CA9070226AE19E000520070 /* GeekBrainsCProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GeekBrainsCProject; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CA9070526AE19E000520070 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -57,6 +58,7 @@
 		4CA9070426AE19E000520070 /* GeekBrainsCProject */ = {
 			isa = PBXGroup;
 			children = (
+				4C7B41AA26CCA74D004BD6BB /* numbers.txt */,
 				4CA9070526AE19E000520070 /* main.c */,
 			);
 			path = GeekBrainsCProject;

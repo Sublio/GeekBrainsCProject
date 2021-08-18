@@ -12,180 +12,281 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-typedef int T;
-typedef struct Node {
-    T data;
-    struct Node *left;
-    struct Node *right;
-    struct Node *parent;
-} Node;
+#define SIZE 40
+
+struct queue {
+    int items[SIZE];
+    int front;
+    int rear;
+};
+
+// Queue section declaration
+
+struct queue* createQueue(void);
+void enqueue(struct queue* q, int);
+int dequeue(struct queue* q);
+void display(struct queue* q);
+int isEmpty(struct queue* q);
+void printQueue(struct queue* q);
+
+// End Queue section
+
+int readNumbers(char *filename, int *data);
+void showData(int *data, int len);
+struct node* createNode(int v);
+
+struct node {
+    int vertex;
+    struct node* next;
+};
 
 
-void printTree(Node *root) {
-    if (root)
-    {
-        printf("%d",root->data);
-        if (root->left || root->right)
-        {
-        printf("(");
- 
-        if (root->left)
-            printTree(root->left);
-        else
-            printf("NULL");
-        printf(",");
- 
-        if (root->right)
-            printTree(root->right);
-        else
-            printf("NULL");
-        printf(")");
+// Create a queue
+struct queue* createQueue(void) {
+    struct queue* q = malloc(sizeof(struct queue));
+    q->front = -1;
+    q->rear = -1;
+    return q;
+}
+
+// Check if the queue is empty
+int isEmpty(struct queue* q) {
+    if (q->rear == -1)
+        return 1;
+    else
+        return 0;
+}
+
+// Adding elements into queue
+void enqueue(struct queue* q, int value) {
+    if (q->rear == SIZE - 1)
+        printf("\nQueue is Full!!");
+    else {
+        if (q->front == -1)
+            q->front = 0;
+        q->rear++;
+        q->items[q->rear] = value;
+    }
+}
+
+// Removing elements from queue
+int dequeue(struct queue* q) {
+    int item;
+    if (isEmpty(q)) {
+        printf("Queue is empty");
+        item = -1;
+    } else {
+        item = q->items[q->front];
+        q->front++;
+        if (q->front > q->rear) {
+            printf("Resetting queue ");
+            q->front = q->rear = -1;
+        }
+    }
+    return item;
+}
+
+// Print the queue
+void printQueue(struct queue* q) {
+    int i = q->front;
+    
+    if (isEmpty(q)) {
+        printf("Queue is empty");
+    } else {
+        printf("\nQueue contains \n");
+        for (i = q->front; i < q->rear + 1; i++) {
+            printf("%d ", q->items[i]);
         }
     }
 }
 
+struct Graph {
+    int numVertices;
+    int* visited;
+    
+    // We need int** to store a two dimensional array.
+    // Similary, we need struct node** to store an array of Linked lists
+    struct node** adjLists;
+};
 
-Node* createFreeNode(T value, Node *parent) {
-    Node* tmp = (Node*) malloc(sizeof(Node));
-    tmp->left = tmp->right = NULL;
-    tmp->data = value;
-    tmp->parent = parent;
-    return tmp;
+void DFS(struct Graph* graph, int vertex) {
+    struct node* adjList = graph->adjLists[vertex];
+    struct node* temp = adjList;
+    
+    graph->visited[vertex] = 1;
+    printf("Visited %d \n", vertex);
+    
+    while (temp != NULL) {
+        int connectedVertex = temp->vertex;
+        
+        if (graph->visited[connectedVertex] == 0) {
+            DFS(graph, connectedVertex);
+        }
+        temp = temp->next;
+    }
 }
 
-void insert(Node **head, int value) {
-    Node *tmp = NULL;
-    if (*head == NULL)
-    {
-        *head = createFreeNode(value, NULL);
-        return;
-    }
- 
-    tmp = *head;
-    while (tmp)
-    {
-        if (value> tmp->data)
-        {
-            if (tmp->right)
-            {
-                tmp = tmp->right;
-                continue;
+void bfs(struct Graph* graph, int startVertex) {
+    struct queue* q = createQueue();
+    
+    graph->visited[startVertex] = 1;
+    enqueue(q, startVertex);
+    
+    while (!isEmpty(q)) {
+        printQueue(q);
+        int currentVertex = dequeue(q);
+        printf("Visited %d\n", currentVertex);
+        
+        struct node* temp = graph->adjLists[currentVertex];
+        
+        while (temp) {
+            int adjVertex = temp->vertex;
+            
+            if (graph->visited[adjVertex] == 0) {
+                graph->visited[adjVertex] = 1;
+                enqueue(q, adjVertex);
             }
-            else
-            {
-                tmp->right = createFreeNode(value, tmp);
-                return;
-            }
-        }
-        else if (value< tmp->data)
-        {
-            if (tmp->left)
-            {
-                tmp = tmp->left;
-                continue;
-            }
-            else
-            {
-                tmp->left = createFreeNode(value, tmp);
-                return;
-            }
-        }
-        else
-        {
-            exit(2); // wrong tree node
+            temp = temp->next;
         }
     }
 }
 
+struct node* createNode(int v) {
+    struct node* newNode = malloc(sizeof(struct node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
 
-void preOrderTravers(Node* root) {
-    if (root) {
-        printf("%d ", root->data);
-        preOrderTravers(root->left);
-        preOrderTravers(root->right);
+struct Graph* createGraph(int vertices) {
+    struct Graph* graph = malloc(sizeof(struct Graph));
+    graph->numVertices = vertices;
+    
+    graph->adjLists = malloc(vertices * sizeof(struct node*));
+    
+    graph->visited = malloc(vertices * sizeof(int));
+    
+    int i;
+    for (i = 0; i < vertices; i++) {
+        graph->adjLists[i] = NULL;
+        graph->visited[i] = 0;
+    }
+    return graph;
+}
+
+void addEdge(struct Graph* graph, int src, int dest) {
+    // Add edge from src to dest
+    struct node* newNode = createNode(dest);
+    newNode->next = graph->adjLists[src];
+    graph->adjLists[src] = newNode;
+    
+    // Add edge from dest to src
+    newNode = createNode(src);
+    newNode->next = graph->adjLists[dest];
+    graph->adjLists[dest] = newNode;
+}
+
+void printGraph(struct Graph* graph) {
+    int v;
+    for (v = 0; v < graph->numVertices; v++) {
+        struct node* temp = graph->adjLists[v];
+        printf("\n Список соседних вершин %d\n ", v);
+        while (temp) {
+            printf("%d -> ", temp->vertex);
+            temp = temp->next;
+        }
+        printf("\n");
     }
 }
 
-
-void simTreePass(Node* root) {
-    if (root) {
-        simTreePass(root->left);
-        printf("%d ", root->data);
-        simTreePass(root->right);
-    }
+void graphInit(void){
+    struct Graph* graph = createGraph(4);
+    addEdge(graph, 0, 1);
+    addEdge(graph, 0, 2);
+    addEdge(graph, 1, 2);
+    addEdge(graph, 2, 3);
+    printGraph(graph);
+    DFS(graph, 2);
 }
 
-void inverseTreePrint(Node* root) {
-    if (root) {
-        simTreePass(root->left);
-        simTreePass(root->right);
-        printf("%d ", root->data);
-    }
+void graphBFS(void){
+    struct Graph* graph = createGraph(6);
+    addEdge(graph, 0, 1);
+    addEdge(graph, 0, 2);
+    addEdge(graph, 1, 2);
+    addEdge(graph, 1, 4);
+    addEdge(graph, 1, 3);
+    addEdge(graph, 2, 4);
+    addEdge(graph, 3, 4);
+    
+    bfs(graph, 0);
 }
 
-Node *find(Node *root, int value)
-{
-    while (root)   // Until tree is not null
+
+void readData(void){
+    char key;
+    int len, data[1000];
+    len = readNumbers("numbers.txt", data);
+    showData(data, len);
+    scanf("%c", &key);
+}
+
+int readNumbers(char *fileName, int *data){
+    FILE *in;
+    int len;
+    int j;
+    in = fopen("numbers.txt", "r");
     {
-        if (root->data > value)
-        {
-            root = root->left;
-            continue;
+        printf("////////////////////Reading matrix//////////////////////\n");
+        fscanf(in, "%d", &len);
+        for (j = 0; j<len; j++){
+            fscanf(in, "%d", data + j);
         }
-        else if (root->data > value)
-        {
-            root = root->right;
-            continue;
-        }
-        else
-        {
-            return root;
-        }
+        fclose(in);
     }
-    return NULL;
+    return len;
+}
+
+void showData(int *data, int len){
+    int j;
+    
+    printf("Showing %d numbers from data array....\n", len);
+    for(j=0;j<len;j++) {
+        printf("%d", *(data + j));
+    }
+    printf("\n");
 }
 
 
-int hash(char *S)
-{
-     int r=0;
-     while(*S)
-     {
-         r+=(int)(*S);
-         S++;
-     }
-     return r;
+
+void showMenu(void) {
+    int select;
+    printf("Выберите алгоритм:\n");
+    printf("[1] Считывание матрицы смежности из файла и вывод ее в консоль;\n");
+    printf("[2] Обход графа в глубину;\n");
+    printf("[3] Обход графа в ширину;\n");
+    printf("[0] выход \n");
+    
+    scanf("%d", &select);
+    
+    switch (select) {
+        case 1:
+            readData();
+            break;
+        case 2:
+            graphInit();
+            break;
+        case 3:
+            graphBFS();
+            break;
+        case 0:
+        default:
+            break;
+    }
 }
-
-
-//void showMenu(void) {
-//    int select;
-//    printf("Выберите алгоритм:\n");
-//    printf("[1] Реализовать простейшую хеш-функцию;\n");
-//    printf("[2] Написать программу, которая определяет, является ли введенная скобочная последовательность правильной;\n");
-//    printf("[3] Реализовать очередь;\n");
-//    printf("[0] выход \n");
-//
-//    scanf("%d", &select);
-//    int i;
-//
-//    switch (select) {
-//        case 1:
-//            i = hash("avs");
-//            printf("Result is %d\n", i);
-//            break;
-//        case 2:
-//            break;
-//        case 3:
-//            break;
-//        case 0:
-//        default:
-//            break;
-//    }
-//}
 
 
 int main(int argc, const char * argv[]) {
-    //showMenu();
+    showMenu();
     return 0;
 }
