@@ -12,272 +12,113 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define SIZE 40
-
-struct queue {
-    int items[SIZE];
-    int front;
-    int rear;
-};
-
-// Queue section declaration
-
-struct queue* createQueue(void);
-void enqueue(struct queue* q, int);
-int dequeue(struct queue* q);
-void display(struct queue* q);
-int isEmpty(struct queue* q);
-void printQueue(struct queue* q);
-
-// End Queue section
-
-int readNumbers(char *filename, int *data);
-void showData(int *data, int len);
-struct node* createNode(int v);
-
-struct node {
-    int vertex;
-    struct node* next;
-};
+#define SIZE 20
 
 
-// Create a queue
-struct queue* createQueue(void) {
-    struct queue* q = malloc(sizeof(struct queue));
-    q->front = -1;
-    q->rear = -1;
-    return q;
-}
-
-// Check if the queue is empty
-int isEmpty(struct queue* q) {
-    if (q->rear == -1)
-        return 1;
-    else
-        return 0;
-}
-
-// Adding elements into queue
-void enqueue(struct queue* q, int value) {
-    if (q->rear == SIZE - 1)
-        printf("\nQueue is Full!!");
-    else {
-        if (q->front == -1)
-            q->front = 0;
-        q->rear++;
-        q->items[q->rear] = value;
-    }
-}
-
-// Removing elements from queue
-int dequeue(struct queue* q) {
-    int item;
-    if (isEmpty(q)) {
-        printf("Queue is empty");
-        item = -1;
-    } else {
-        item = q->items[q->front];
-        q->front++;
-        if (q->front > q->rear) {
-            printf("Resetting queue ");
-            q->front = q->rear = -1;
-        }
-    }
-    return item;
-}
-
-// Print the queue
-void printQueue(struct queue* q) {
-    int i = q->front;
-    
-    if (isEmpty(q)) {
-        printf("Queue is empty");
-    } else {
-        printf("\nQueue contains \n");
-        for (i = q->front; i < q->rear + 1; i++) {
-            printf("%d ", q->items[i]);
-        }
-    }
-}
-
-struct Graph {
-    int numVertices;
-    int* visited;
-    
-    // We need int** to store a two dimensional array.
-    // Similary, we need struct node** to store an array of Linked lists
-    struct node** adjLists;
-};
-
-void DFS(struct Graph* graph, int vertex) {
-    struct node* adjList = graph->adjLists[vertex];
-    struct node* temp = adjList;
-    
-    graph->visited[vertex] = 1;
-    printf("Visited %d \n", vertex);
-    
-    while (temp != NULL) {
-        int connectedVertex = temp->vertex;
-        
-        if (graph->visited[connectedVertex] == 0) {
-            DFS(graph, connectedVertex);
-        }
-        temp = temp->next;
-    }
-}
-
-void bfs(struct Graph* graph, int startVertex) {
-    struct queue* q = createQueue();
-    
-    graph->visited[startVertex] = 1;
-    enqueue(q, startVertex);
-    
-    while (!isEmpty(q)) {
-        printQueue(q);
-        int currentVertex = dequeue(q);
-        printf("Visited %d\n", currentVertex);
-        
-        struct node* temp = graph->adjLists[currentVertex];
-        
-        while (temp) {
-            int adjVertex = temp->vertex;
-            
-            if (graph->visited[adjVertex] == 0) {
-                graph->visited[adjVertex] = 1;
-                enqueue(q, adjVertex);
-            }
-            temp = temp->next;
-        }
-    }
-}
-
-struct node* createNode(int v) {
-    struct node* newNode = malloc(sizeof(struct node));
-    newNode->vertex = v;
-    newNode->next = NULL;
-    return newNode;
-}
-
-struct Graph* createGraph(int vertices) {
-    struct Graph* graph = malloc(sizeof(struct Graph));
-    graph->numVertices = vertices;
-    
-    graph->adjLists = malloc(vertices * sizeof(struct node*));
-    
-    graph->visited = malloc(vertices * sizeof(int));
-    
-    int i;
-    for (i = 0; i < vertices; i++) {
-        graph->adjLists[i] = NULL;
-        graph->visited[i] = 0;
-    }
-    return graph;
-}
-
-void addEdge(struct Graph* graph, int src, int dest) {
-    // Add edge from src to dest
-    struct node* newNode = createNode(dest);
-    newNode->next = graph->adjLists[src];
-    graph->adjLists[src] = newNode;
-    
-    // Add edge from dest to src
-    newNode = createNode(src);
-    newNode->next = graph->adjLists[dest];
-    graph->adjLists[dest] = newNode;
-}
-
-void printGraph(struct Graph* graph) {
-    int v;
-    for (v = 0; v < graph->numVertices; v++) {
-        struct node* temp = graph->adjLists[v];
-        printf("\n Список соседних вершин %d\n ", v);
-        while (temp) {
-            printf("%d -> ", temp->vertex);
-            temp = temp->next;
-        }
-        printf("\n");
-    }
-}
-
-void graphInit(void){
-    struct Graph* graph = createGraph(4);
-    addEdge(graph, 0, 1);
-    addEdge(graph, 0, 2);
-    addEdge(graph, 1, 2);
-    addEdge(graph, 2, 3);
-    printGraph(graph);
-    DFS(graph, 2);
-}
-
-void graphBFS(void){
-    struct Graph* graph = createGraph(6);
-    addEdge(graph, 0, 1);
-    addEdge(graph, 0, 2);
-    addEdge(graph, 1, 2);
-    addEdge(graph, 1, 4);
-    addEdge(graph, 1, 3);
-    addEdge(graph, 2, 4);
-    addEdge(graph, 3, 4);
-    
-    bfs(graph, 0);
-}
-
-
-void readData(void){
-    char key;
-    int len, data[1000];
-    len = readNumbers("numbers.txt", data);
-    showData(data, len);
-    scanf("%c", &key);
-}
-
-int readNumbers(char *fileName, int *data){
-    FILE *in;
-    int len;
-    int j;
-    in = fopen("numbers.txt", "r");
+void quickSort(int *numbers, int left, int right)
+{
+  int pivot; // разрешающий элемент
+  int l_hold = left; //левая граница
+  int r_hold = right; // правая граница
+  pivot = numbers[left];
+  while (left < right) // пока границы не сомкнутся
+  {
+    while ((numbers[right] >= pivot) && (left < right))
+      right--; // сдвигаем правую границу пока элемент [right] больше [pivot]
+    if (left != right) // если границы не сомкнулись
     {
-        printf("////////////////////Reading matrix//////////////////////\n");
-        fscanf(in, "%d", &len);
-        for (j = 0; j<len; j++){
-            fscanf(in, "%d", data + j);
-        }
-        fclose(in);
+      numbers[left] = numbers[right]; // перемещаем элемент [right] на место разрешающего
+      left++; // сдвигаем левую границу вправо
     }
-    return len;
+    while ((numbers[left] <= pivot) && (left < right))
+      left++; // сдвигаем левую границу пока элемент [left] меньше [pivot]
+    if (left != right) // если границы не сомкнулись
+    {
+      numbers[right] = numbers[left]; // перемещаем элемент [left] на место [right]
+      right--; // сдвигаем правую границу вправо
+    }
+  }
+  numbers[left] = pivot; // ставим разрешающий элемент на место
+  pivot = left;
+  left = l_hold;
+  right = r_hold;
+  if (left < pivot) // Рекурсивно вызываем сортировку для левой и правой части массива
+    quickSort(numbers, left, pivot - 1);
+  if (right > pivot)
+    quickSort(numbers, pivot + 1, right);
 }
 
-void showData(int *data, int len){
-    int j;
-    
-    printf("Showing %d numbers from data array....\n", len);
-    for(j=0;j<len;j++) {
-        printf("%d", *(data + j));
+
+void countArraySorting(int n, int array[], int sortedArray[])
+{
+    int k;
+    for (int i = 0; i < n; i++)
+    {
+        k = 0;
+        for (int j = 0; j < n; j++)
+        {
+            if (array[i] > array[j])
+                k++;
+        }
+        sortedArray[k] = array[i];
     }
+}
+
+
+void quickSortArrayForming(void){
+    
+    int a[SIZE];
+     // Заполнение массива случайными числами
+     for (int i = 0; i<SIZE; i++)
+       a[i] = rand() % 201 - 100;
+     // Вывод элементов массива до сортировки
+     for (int i = 0; i<SIZE; i++)
+       printf("%d ", a[i]);
+     printf("\n");
+     quickSort(a, 0, SIZE-1); // вызов функции сортировки
+               // Вывод элементов массива после сортировки
+     for (int i = 0; i<SIZE; i++)
+       printf("%d ", a[i]);
+     printf("\n");
+}
+
+void formTestArrayCounting(void){
+    int N;
+    printf("Введите размер массива\n");
+    scanf("%d", &N);
+    
+    int *mass, *sortedMass;
+    mass = (int *)malloc(N * sizeof(int));
+    sortedMass = (int *)malloc(N * sizeof(int));
+    //ввод элементов массива
+    printf("Input the array elements:\n");
+    for (int i = 0; i < N; i++)
+        scanf("%d", &mass[i]);
+    //сортировка методом подсчета
+    countArraySorting(N, mass, sortedMass);
+    //вывод отсортированного массива на экран
+    printf("Sorted array:\n");
+    for (int i = 0; i < N; i++)
+        printf("%d ", sortedMass[i]);
     printf("\n");
 }
-
 
 
 void showMenu(void) {
     int select;
     printf("Выберите алгоритм:\n");
-    printf("[1] Считывание матрицы смежности из файла и вывод ее в консоль;\n");
-    printf("[2] Обход графа в глубину;\n");
-    printf("[3] Обход графа в ширину;\n");
+    printf("[1] Сортировка подсчетом;\n");
+    printf("[2] Быстрая сортировка;\n");
     printf("[0] выход \n");
     
     scanf("%d", &select);
     
     switch (select) {
         case 1:
-            readData();
+            formTestArrayCounting();
             break;
         case 2:
-            graphInit();
-            break;
-        case 3:
-            graphBFS();
+            quickSortArrayForming();
             break;
         case 0:
         default:
